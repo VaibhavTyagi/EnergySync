@@ -9,11 +9,23 @@ import {
     Clock,
     Settings,
     Plus,
-    Calendar
+    Calendar,
+    Fan,
+    ThermometerSun,
+    Microwave,
+    UtensilsCrossed,
+    Zap
 } from 'lucide-react';
 import './ApplianceControl.css';
+import mqttClient from '../mqttService';
+import { useEffect } from 'react';
 
 const ApplianceControl = () => {
+    useEffect(() => {
+        // Expose client for direct publishing
+        window.mqttClient = mqttClient;
+    }, []);
+
     const [appliances, setAppliances] = useState([
         {
             id: 1,
@@ -67,15 +79,79 @@ const ApplianceControl = () => {
             power: '0.2 kW',
             schedule: { enabled: false }
         },
+        {
+            id: 6,
+            name: 'Ceiling Fan',
+            room: 'Bedroom',
+            icon: Fan,
+            status: true,
+            power: '0.07 kW',
+            speed: 'Medium',
+            schedule: { enabled: false }
+        },
+        {
+            id: 7,
+            name: 'Water Heater',
+            room: 'Bathroom',
+            icon: ThermometerSun,
+            status: false,
+            power: '2.0 kW',
+            temperature: 60,
+            schedule: { enabled: true, time: '07:00' }
+        },
+        {
+            id: 8,
+            name: 'Microwave',
+            room: 'Kitchen',
+            icon: Microwave,
+            status: false,
+            power: '1.2 kW',
+            mode: 'Defrost',
+            schedule: { enabled: false }
+        },
+        {
+            id: 9,
+            name: 'Dishwasher',
+            room: 'Kitchen',
+            icon: UtensilsCrossed,
+            status: false,
+            power: '1.5 kW',
+            cycle: 'Eco',
+            schedule: { enabled: false }
+        },
+        {
+            id: 10,
+            name: 'EV Charger',
+            room: 'Garage',
+            icon: Zap,
+            status: false,
+            power: '7.2 kW',
+            mode: 'Fast Charge',
+            schedule: { enabled: true, time: '01:00' }
+        }
     ]);
 
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [selectedAppliance, setSelectedAppliance] = useState(null);
 
     const toggleAppliance = (id) => {
-        setAppliances(appliances.map(app =>
-            app.id === id ? { ...app, status: !app.status } : app
-        ));
+        setAppliances(appliances.map(app => {
+            if (app.id === id) {
+                const newStatus = !app.status;
+                // Publish control command to MQTT
+                if (window.mqttClient && window.mqttClient.connected) {
+                    const topic = `energysync/control/${app.name.toLowerCase().replace(' ', '_')}`;
+                    const payload = JSON.stringify({
+                        command: newStatus ? 'ON' : 'OFF',
+                        timestamp: new Date().toISOString()
+                    });
+                    window.mqttClient.publish(topic, payload);
+                    console.log(`📡 Sent command to ${topic}: ${payload}`);
+                }
+                return { ...app, status: newStatus };
+            }
+            return app;
+        }));
     };
 
     const adjustTemperature = (id, delta) => {

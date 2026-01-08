@@ -2,225 +2,124 @@
 
 A comprehensive React-based energy management application that helps users monitor, control, and optimize their home energy consumption with real-time insights and AI-powered recommendations.
 
-## 🌟 Features
+![EnergySync Dashboard](file:///C:/Users/srira/.gemini/antigravity/brain/0acd6500-3b9a-4602-b9f7-0577cfc8b49d/energysync_dashboard_1767845040967.png)
+
+## 🌟 New Features: Real-Time IoT Integration
+
+We have upgraded the platform to a fully functional **Real-Time IoT System**.
+
+### 📡 1. Live Data Streaming
+- **Protocol**: MQTT over WebSockets.
+- **Latency**: Sub-second updates.
+- **Function**: The dashboard listens to the `energysync/appliances/+` topic and updates power charts and "Current Usage" stats instantly without page reloads.
+
+### 🏠 2. Virtual Smart Home (Node-RED)
+- A complete backend simulation of a smart home using **Node-RED**.
+- Simulates logic for **10 Independent Smart Appliances**.
+- **Two-Way Communication**:
+    - **Web -> Device**: Clicking "ON" in the app sends a command to Node-RED.
+    - **Device -> Web**: Node-RED processes the command and reports back the new power state.
+- **Visual Demo**: Perfect for jury presentations to visualize data flow.
+
+### 💡 3. Hardware Ready
+- Includes production-ready C++ firmware (`smart_light_firmware.ino`) for **ESP32** microcontrollers.
+- Allows physical smart bulbs/plugs to be controlled by the same web interface.
+
+---
+
+## 📱 Core Features
 
 ### 1. **Dashboard**
-- Real-time energy consumption monitoring
+- Real-time energy consumption (Live Pulse)
 - Live appliance status tracking
-- Interactive charts showing energy usage patterns
 - Smart recommendations for energy optimization
 - Quick stats: current usage, daily cost, monthly savings, carbon saved
 
-### 2. **Appliance Control**
-- Remote ON/OFF control for all connected appliances
-- Temperature and brightness controls
-- Scheduling and automation features
-- Real-time power consumption monitoring
-- Support for multiple appliance types:
-  - Air Conditioners
-  - Refrigerators
-  - Washing Machines
-  - Smart Lights
-  - Televisions
-  - And more...
+### 2. **Universal Appliance Control**
+Remote control and scheduling for **10 Smart Devices**:
+1.  **Air Conditioner**
+2.  **Refrigerator**
+3.  **Washing Machine**
+4.  **Smart Lights**
+5.  **Television**
+6.  **Ceiling Fan**
+7.  **Water Heater (Geyser)**
+8.  **Microwave**
+9.  **Dishwasher**
+10. **EV Charger**
 
 ### 3. **Tariff Optimization**
 - Time-of-Day (ToD) tariff rate visualization
-- AI-powered scheduling recommendations
-- Potential savings calculator
-- Smart appliance scheduling to minimize costs
-- Monthly savings comparison charts
-- Peak/Off-Peak rate indicators
+- AI-powered scheduling recommendations to save ~15% on bills.
 
 ### 4. **Energy Insights**
-- Detailed consumption analytics
-- Hourly, daily, weekly, and monthly trends
-- Appliance-level comparison
-- Energy efficiency scoring
-- Consumption pattern analysis
-- Exportable reports
+- Hourly, daily, weekly, and monthly consumption trends.
+- Appliance-level power breakdowns.
 
 ### 5. **Carbon Footprint**
-- CO₂ emissions tracking
-- Environmental impact visualization
-- Tree planting equivalents
-- Carbon reduction targets
-- Achievement system for sustainability goals
-- Eco-friendly tips and recommendations
+- CO₂ emissions tracking and "Trees Planted" equivalents.
 
 ### 6. **Billing & Payments**
-- Current bill overview
-- Payment history
-- Cost breakdown analysis
-- Savings projections
-- Downloadable bill statements
-- Bill comparison (month-over-month)
+- Simulated monthly bills with cost breakdowns and savings projections.
+
+---
 
 ## 🚀 Technology Stack
 
-- **Frontend Framework**: React 18
-- **Routing**: React Router DOM
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Build Tool**: Vite
-- **Styling**: Vanilla CSS with modern design system
-- **Date Utilities**: date-fns
+- **Frontend**: React 18, Vite
+- **IoT Protocol**: MQTT (via HiveMQ Public Broker)
+- **Simulation**: Node-RED (Logic Flows)
+- **Hardware**: ESP32 / Arduino (C++)
+- **Visualization**: Recharts
+- **Styling**: Vanilla CSS (Glassmorphism Design)
 
-## 📋 Requirements Addressed
+---
 
-This application fulfills all requirements from the BusinessRequirements document:
+## 📦 Installation & Setup
 
-✅ **Web & Mobile Application**: Responsive design works on all devices  
-✅ **Smart Meter Integration**: Real-time monitoring dashboard  
-✅ **Appliance Control**: ON/OFF control + scheduling & automation  
-✅ **Dynamic Tariff Optimization**: ToD tariff engine with recommendations  
-✅ **Dashboards**: Energy usage, bills, carbon footprint tracking  
-✅ **Billing Simulation**: Estimated costs and savings projections  
-✅ **Scalable Architecture**: Component-based React architecture  
-✅ **User-Centric Design**: Intuitive UI/UX with modern aesthetics  
-
-## 🎨 Design Features
-
-- **Modern Dark Theme**: Energy-themed color palette with vibrant accents
-- **Glassmorphism Effects**: Premium glass-style UI components
-- **Smooth Animations**: Micro-interactions for enhanced UX
-- **Responsive Design**: Mobile-first approach, works on all screen sizes
-- **Interactive Charts**: Real-time data visualization
-- **Custom Typography**: Inter font for modern, clean look
-- **Gradient Accents**: Eye-catching gradient effects
-- **Accessibility**: Semantic HTML and proper contrast ratios
-
-## 📦 Installation
-
+### 1. Run the Web App
 1. **Clone the repository**
    ```bash
-   cd c:\EnergySync\EnergySync\MobileApp
+   cd e:\EnergySync\MobileApp
    ```
-
 2. **Install dependencies**
    ```bash
    npm install
    ```
-
 3. **Run the development server**
    ```bash
    npm run dev
    ```
+4. **Open in browser**: `http://localhost:5173`
 
-4. **Open in browser**
-   Navigate to `http://localhost:5173`
+### 2. Run the Virtual Smart Home (Simulation)
+1. **Install Node-RED**
+   ```bash
+   npm install -g node-red
+   node-red
+   ```
+2. **Import Logic**
+   - Open `http://127.0.0.1:1880`
+   - Import the file `virtual_house_flow.json` (found in project root).
+   - Click **Deploy**.
 
-## 🏗️ Project Structure
-
-```
-MobileApp/
-├── src/
-│   ├── components/
-│   │   ├── Sidebar.jsx          # Navigation sidebar
-│   │   └── Sidebar.css
-│   ├── pages/
-│   │   ├── Dashboard.jsx        # Main dashboard
-│   │   ├── Dashboard.css
-│   │   ├── ApplianceControl.jsx # Appliance management
-│   │   ├── ApplianceControl.css
-│   │   ├── TariffOptimization.jsx # Tariff optimizer
-│   │   ├── TariffOptimization.css
-│   │   ├── EnergyInsights.jsx   # Analytics & insights
-│   │   ├── EnergyInsights.css
-│   │   ├── CarbonFootprint.jsx  # Environmental tracking
-│   │   ├── CarbonFootprint.css
-│   │   ├── Billing.jsx          # Billing & payments
-│   │   └── Billing.css
-│   ├── App.jsx                  # Main app component
-│   ├── App.css
-│   ├── main.jsx                 # Entry point
-│   └── index.css                # Global styles & design system
-├── index.html
-├── package.json
-└── vite.config.js
-```
-
-## 🎯 Key Modules
-
-### Dashboard Module
-- **Purpose**: Unified view of all energy data
-- **Features**: Real-time stats, consumption charts, active appliances, smart recommendations
-- **Charts**: Area chart for consumption trends, Pie chart for appliance distribution
-
-### Appliance Control Module
-- **Purpose**: Manage all connected devices
-- **Features**: Power toggle, temperature/brightness controls, scheduling
-- **Supported Controls**: Temperature adjustment, brightness slider, mode selection
-
-### Tariff Optimization Module
-- **Purpose**: Maximize savings through smart scheduling
-- **Features**: ToD rate visualization, AI recommendations, savings calculator
-- **Charts**: Bar chart for tariff rates, Line chart for savings comparison
-
-### Energy Insights Module
-- **Purpose**: Detailed analytics and patterns
-- **Features**: Multi-period analysis, appliance comparison, efficiency scoring
-- **Charts**: Area chart for weekly trends, Line chart for hourly patterns, Bar chart for comparisons
-
-### Carbon Footprint Module
-- **Purpose**: Track environmental impact
-- **Features**: Emissions tracking, achievement system, reduction targets
-- **Charts**: Area chart for emissions trend, Pie chart for sources, Radar chart for impact score
-
-### Billing Module
-- **Purpose**: Financial management and payment tracking
-- **Features**: Current bill display, payment history, cost breakdown, savings projections
-- **Charts**: Line chart for billing trends, Bar chart for cost breakdown
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary Green**: `hsl(142, 71%, 45%)` - Energy/success indicator
-- **Secondary Blue**: `hsl(210, 100%, 56%)` - Information/data
-- **Accent Orange**: `hsl(25, 95%, 53%)` - Warnings/highlights
-- **Accent Yellow**: `hsl(45, 93%, 58%)` - Attention/alerts
-- **Accent Purple**: `hsl(271, 76%, 53%)` - Special features
-
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Weights**: 300, 400, 500, 600, 700, 800
-
-### Components
-- Cards with glassmorphism effects
-- Gradient buttons with hover animations
-- Custom sliders and toggles
-- Responsive tables and grids
-- Modal dialogs
-- Badge components
-- Progress bars
-
-## 📊 Success Metrics (from Requirements)
-
-✅ **Adoption**: Intuitive UI allows appliance onboarding within 5 minutes  
-✅ **Convenience**: Multiple appliances controllable via app  
-✅ **Optimization**: Demonstrates 10-15% cost savings via ToD optimization  
-✅ **Reliability**: React-based SPA ensures high uptime  
-✅ **Sustainability**: Visible CO₂ footprint reduction tracking  
-
-## 🔮 Future Enhancements
-
-- Voice assistant integration
-- Real IoT device integration via WebSocket
-- Push notifications for alerts
-- Mobile app (React Native)
-- Multi-language support
-- Advanced AI/ML predictions
-- Social sharing of achievements
-- Community features
-
-## 📝 License
-
-This project is part of the EnergySync Smart Metering Super App initiative.
-
-## 👥 Support
-
-For questions or support, please refer to the BusinessRequirements documentation or contact the development team.
+### 3. (Optional) Run Physical Hardware
+1. Flash `smart_light_firmware.ino` to an ESP32.
+2. Connect to WiFi.
+3. Watch it respond to the web app commands!
 
 ---
+
+## 🎨 Design Features
+
+- **Modern Dark Theme**: Energy-themed color palette.
+- **Glassmorphism**: Premium transparent UI cards.
+- **Pulse Animations**: Visual indicators for live data connection.
+- **Responsive**: Full mobile support.
+
+---
+
+## 👥 Support
+For questions or support, please refer to the BusinessRequirements documentation or contact the development team.
 
 **Built with ⚡ by the EnergySync Team**

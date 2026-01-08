@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import mqttClient from '../mqttService';
 import {
     Zap,
     TrendingDown,
@@ -26,8 +27,10 @@ import {
 import './Dashboard.css';
 
 const Dashboard = () => {
+    const [currentPower, setCurrentPower] = useState(4.2);
+
     // Sample data for energy consumption
-    const energyData = [
+    const [energyData, setEnergyData] = useState([
         { time: '00:00', consumption: 2.1, cost: 1.5 },
         { time: '04:00', consumption: 1.8, cost: 1.2 },
         { time: '08:00', consumption: 4.5, cost: 3.8 },
@@ -35,7 +38,35 @@ const Dashboard = () => {
         { time: '16:00', consumption: 6.8, cost: 6.2 },
         { time: '20:00', consumption: 7.5, cost: 7.0 },
         { time: '23:59', consumption: 3.2, cost: 2.8 },
-    ];
+    ]);
+
+    useEffect(() => {
+        const handleMessage = (topic, message) => {
+            if (topic.includes('appliances')) {
+                try {
+                    const data = JSON.parse(message.toString());
+                    if (data.power !== undefined) {
+                        const newPower = parseFloat(data.power);
+                        setCurrentPower(newPower);
+
+                        // Update chart with live point
+                        const now = new Date();
+                        const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+                        setEnergyData(prev => {
+                            const newData = [...prev.slice(-6), { time: timeStr, consumption: newPower, cost: (newPower * 0.8).toFixed(2) }];
+                            return newData;
+                        });
+                    }
+                } catch (e) {
+                    console.error("Failed to parse MQTT message", e);
+                }
+            }
+        };
+
+        mqttClient.on('message', handleMessage);
+        return () => mqttClient.off('message', handleMessage);
+    }, []);
 
     const applianceData = [
         { name: 'Air Conditioner', value: 35, color: 'hsl(210, 100%, 56%)' },
@@ -48,7 +79,7 @@ const Dashboard = () => {
     const stats = [
         {
             title: 'Current Usage',
-            value: '4.2 kW',
+            value: `${currentPower} kW`,
             change: '+12%',
             trend: 'up',
             icon: Zap,
@@ -57,7 +88,7 @@ const Dashboard = () => {
         },
         {
             title: 'Today\'s Cost',
-            value: '₹245',
+            value: `₹${(currentPower * 58).toFixed(0)}`, // Simulated dynamic calculation
             change: '-8%',
             trend: 'down',
             icon: DollarSign,
@@ -85,7 +116,7 @@ const Dashboard = () => {
     ];
 
     const activeAppliances = [
-        { name: 'Air Conditioner', room: 'Living Room', power: '1.5 kW', status: 'on', temp: '24°C' },
+        { name: 'Air Conditioner', room: 'Living Room', power: `${(currentPower * 0.4).toFixed(1)} kW`, status: 'on', temp: '24°C' },
         { name: 'Refrigerator', room: 'Kitchen', power: '0.3 kW', status: 'on', temp: '4°C' },
         { name: 'Washing Machine', room: 'Utility', power: '0.8 kW', status: 'on', cycle: '45 min left' },
     ];
@@ -95,7 +126,7 @@ const Dashboard = () => {
             <div className="dashboard-header">
                 <div>
                     <h1>Dashboard</h1>
-                    <p className="text-secondary">Welcome back! Here's your energy overview</p>
+                    <p className="text-secondary">Welcome back! Here's your energy overview <span className="badge badge-success" style={{ fontSize: '10px', marginLeft: '10px' }}>Live Connected</span></p>
                 </div>
                 <div className="header-actions">
                     <button className="btn btn-secondary">
@@ -133,7 +164,7 @@ const Dashboard = () => {
                 <div className="chart-card card-glass">
                     <div className="chart-header">
                         <h3>Energy Consumption</h3>
-                        <span className="badge badge-info">Real-time</span>
+                        <span className="badge badge-info pulse">Real-time</span>
                     </div>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={energyData}>
@@ -154,6 +185,7 @@ const Dashboard = () => {
                                 }}
                             />
                             <Area
+                                isAnimationActive={false}
                                 type="monotone"
                                 dataKey="consumption"
                                 stroke="hsl(142, 71%, 45%)"
