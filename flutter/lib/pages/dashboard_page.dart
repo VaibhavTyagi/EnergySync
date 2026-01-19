@@ -37,9 +37,9 @@ class DashboardPage extends StatelessWidget {
             childAspectRatio: 1.4,
             children: [
               _buildStatCard('Current Usage', '${currentPower} kW', '+12%', Icons.bolt_rounded, const Color(0xFF00D1FF)),
-              _buildStatCard("Today's Cost", '₹${(currentPower * 58).toStringAsFixed(0)}', '-8%', Icons.currency_rupee_rounded, const Color(0xFF10B981)),
+              _buildStatCard("Today's Cost", '₹${(currentPower * 58).toStringAsFixed(0)}', '-8%', Icons.currency_rupee, const Color(0xFF10B981)),
               _buildStatCard('Monthly Savings', '₹1,240', '+15%', Icons.trending_down_rounded, const Color(0xFFF59E0B)),
-              _buildStatCard('Carbon Saved', '42 kg', '+20%', Icons.leaf_rounded, const Color(0xFF10B981)),
+              _buildStatCard('Carbon Saved', '42 kg', '+20%', Icons.eco_rounded, const Color(0xFF10B981)),
             ],
           ),
           
